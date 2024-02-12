@@ -6,7 +6,7 @@ import json
 import os
 
 
-SERVER_URL = 'http://localhost:8000'
+SERVER_URL = 'http://localhost:8001'
 OUTPUT = "./demo_outputs"
 cloned_speakers = {}
 
@@ -29,6 +29,11 @@ try:
     print("Available languages:", ", ".join(LANUGAGES))
     STUDIO_SPEAKERS = requests.get(SERVER_URL + "/studio_speakers").json()
     print("Available studio speakers:", ", ".join(STUDIO_SPEAKERS.keys()))
+    print(len(STUDIO_SPEAKERS.keys()))
+    for key, value in STUDIO_SPEAKERS.items():
+        with open(os.path.join(OUTPUT, "cloned_speakers", key + ".json"), "w") as fp:
+            json.dump(value, fp)
+        # cloned_speakers[key] = value
 except:
     raise Exception("Please make sure the server is running first.")
 
@@ -40,7 +45,7 @@ def clone_speaker(upload_file, clone_speaker_name, cloned_speaker_names):
         json.dump(embeddings, fp)
     cloned_speakers[clone_speaker_name] = embeddings
     cloned_speaker_names.append(clone_speaker_name)
-    return upload_file, clone_speaker_name, cloned_speaker_names, gr.Dropdown.update(choices=cloned_speaker_names)
+    return upload_file, clone_speaker_name, cloned_speaker_names #,  gr.Dropdown.update(choices=cloned_speaker_names)
 
 def tts(text, speaker_type, speaker_name_studio, speaker_name_custom, lang):
     embeddings = STUDIO_SPEAKERS[speaker_name_studio] if speaker_type == 'Studio' else cloned_speakers[speaker_name_custom]
@@ -89,7 +94,7 @@ with gr.Blocks() as demo:
     clone_button.click(
         fn=clone_speaker,
         inputs=[upload_file, clone_speaker_name, cloned_speaker_names],
-        outputs=[upload_file, clone_speaker_name, cloned_speaker_names, speaker_name_custom],
+        outputs=[upload_file, clone_speaker_name, cloned_speaker_names],
     )
 
     tts_button.click(
@@ -114,7 +119,7 @@ if __name__ == "__main__":
     resp.raise_for_status()
     print("Starting the demo...")
     demo.launch(
-        share=False,
+        share=True,
         debug=False,
         server_port=3009,
         server_name="0.0.0.0",

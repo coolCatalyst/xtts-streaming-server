@@ -3,6 +3,7 @@ import io
 import os
 import tempfile
 import wave
+import librosa
 import torch
 import numpy as np
 from typing import List
@@ -73,7 +74,9 @@ def postprocess(wav):
     if isinstance(wav, list):
         wav = torch.cat(wav, dim=0)
     wav = wav.clone().detach().cpu().numpy()
-    wav = wav[None, : int(wav.shape[0])]
+    # wav = wav[None, : int(wav.shape[0])]
+    resampled_wav = librosa.resample(wav, orig_sr=24000, target_sr=16000)
+    wav = resampled_wav[None, : int(resampled_wav.shape[0])]    
     wav = np.clip(wav, -1, 1)
     wav = (wav * 32767).astype(np.int16)
     return wav
@@ -183,3 +186,7 @@ def get_speakers():
 @app.get("/languages")
 def get_languages():
     return config.languages
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)

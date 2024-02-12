@@ -11,7 +11,7 @@ https://github.com/coqui-ai/xtts-streaming-server/assets/17219561/7220442a-e88a-
 CUDA 12.1:
 
 ```bash
-$ docker run --gpus=all -e COQUI_TOS_AGREED=1 --rm -p 8000:80 ghcr.io/coqui-ai/xtts-streaming-server:latest-cuda121
+$ docker run --gpus=all -e COQUI_TOS_AGREED=1 --rm -p 8001:80 ghcr.io/coqui-ai/xtts-streaming-server:latest-cuda121
 ```
 
 CUDA 11.8 (for older cards):

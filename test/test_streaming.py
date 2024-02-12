@@ -31,7 +31,8 @@ def stream_ffplay(audio_stream, output_file, save=True):
     ffplay_proc = subprocess.Popen(ffplay_cmd, stdin=subprocess.PIPE)
     for chunk in audio_stream:
         if chunk is not None:
-            ffplay_proc.stdin.write(chunk)
+            # print(type(chunk))
+            pass
 
     # close on finish
     ffplay_proc.stdin.close()
@@ -57,6 +58,7 @@ def tts(text, speaker, language, server_url, stream_chunk_size) -> Iterator[byte
 
     first = True
     for chunk in res.iter_content(chunk_size=512):
+        # print(chunk)
         if first:
             end = time.perf_counter()
             print(f"Time to first chunk: {end-start}s", file=sys.stderr)
@@ -97,7 +99,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--server_url",
-        default="http://localhost:8000",
+        default="http://localhost:8001",
         help="Server url http://localhost:8000 default, change to your server location "
     )
     parser.add_argument(
